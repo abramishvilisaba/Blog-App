@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Outlet, Link } from "react-router-dom";
+import axios from "axios";
+import Home from "./pages/Home";
+import CreateBlog from "./pages/CreateBlog";
+// import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const token = process.env.REACT_APP_TOKEN;
+
+export default function App() {
+    return (
+        <Routes>
+            <Route path="/create" element={<CreateBlog />} />
+            <Route path="/*" element={<Home />} />
+        </Routes>
+
+        // <Home />
+    );
 }
-
-export default App;
