@@ -4,7 +4,7 @@ import Logo from "../images/LOGO.png";
 
 const Navbar = () => {
     return (
-        <nav className="bg-white h-[80px] flex items-center justify-between px-24 fixed w-full ">
+        <nav className="bg-white fill-white  h-[80px] flex items-center justify-between px-24 fixed w-full  ">
             <div className="flex items-center">
                 <img src={Logo} alt="Logo" className=" h-6 mr-4" />
             </div>

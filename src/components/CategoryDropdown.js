@@ -10,6 +10,34 @@ const CategoryDropdown = ({
 }) => {
     return (
         <div className="dropdown-box">
+            <>
+                {/* <CategoryDropdown
+                    categories={categories}
+                    selectedCategories={selectedCategories}
+                    handleChipRemoval={handleChipRemoval}
+                    handleCategorySelection={handleCategorySelection}
+                    showDropdown={showDropdown}
+                    setShowDropdown={setShowDropdown}
+                />
+                <div>
+                    {selectedCategories.map((categoryId) => {
+                        const category = categories.find((cat) => cat.id === categoryId);
+                        return (
+                            <span
+                                key={categoryId}
+                                className="chip"
+                                onClick={() => handleChipRemoval(categoryId)}
+                                style={{
+                                    backgroundColor: category?.background_color || "white",
+                                    color: category?.text_color || "black",
+                                }}
+                            >
+                                {category?.title}
+                            </span>
+                        );
+                    })}
+                </div> */}
+            </>
             <div className="dropdown-header h-8  w-64 bg-slate-300 text-center flex gap-1">
                 {selectedCategories.map((categoryId) => {
                     const category = categories.find((cat) => cat.id === categoryId);
