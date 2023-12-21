@@ -47,4 +47,13 @@ const createBlog = async (formData) => {
     }
 };
 
-export { getAllBlogs, getBlogById, createBlog, getCategories };
+const apiLogin = async (email) => {
+    try {
+        const response = await axiosInstance.post("login", { email: email });
+        return response;
+    } catch (error) {
+        throw new Error("Error logging in:", error);
+    }
+};
+
+export { getAllBlogs, getBlogById, createBlog, getCategories, apiLogin };

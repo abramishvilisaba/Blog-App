@@ -21,12 +21,15 @@ const Card = ({ blog }) => {
                     <p className="w-fit text-black font-medium text-lg mb-4">
                         EOMM-ის მრჩეველთა საბჭოს ნინო ეგაძე შეუერთდა
                     </p>
-                    <div className="w-full flex flex-wrap xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-between">
+                    <div
+                        className="w-full flex  xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-start mb-2
+                        overflow-auto scrollbar-thin scrollbar-track-transparent pb-2 overflow-y-hidden"
+                    >
                         {blog.categories.length > 0 &&
                             blog.categories.map((category) => (
                                 <div
                                     key={category.id}
-                                    className="cursor-pointer w-fit rounded-full border-1 border-solid"
+                                    className="cursor-pointer w-fit h-fit whitespace-nowrap rounded-full border-1 border-solid"
                                     style={{
                                         backgroundColor:
                                             `${category?.background_color}15` || "black",
@@ -35,9 +38,9 @@ const Card = ({ blog }) => {
                                     <h3
                                         style={{
                                             color: `${category?.background_color}` || "white",
-                                            filter: "brightness(80%)",
+                                            // filter: "brightness(80%)",
                                         }}
-                                        className="w-fit font-normal text-base px-3 py-2"
+                                        className="w-fit font-medium text-sm px-3 py-2"
                                     >
                                         {category.title}
                                     </h3>
