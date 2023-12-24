@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getAllBlogs, getCategories } from "../api/blogAPI";
-import Card from "../components/Card";
 import CategoryDropdown from "../components/CategoryDropdown";
+import Card from "../components/Card";
 import Navbar from "../components/Navbar";
 import Brand from "../images/Blog.png";
 
@@ -67,7 +67,7 @@ const Home = () => {
                     </div>
                     <img src={Brand} className="h-[200px]"></img>
                 </div>
-                <div className="lg:w-1/1 xl:w-[55%] my-8 mx-auto flex flex-wrap xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-center">
+                <div className="w-full my-8 mx-auto flex flex-wrap xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-center">
                     {categories.length > 0 &&
                         categories.map((category) => (
                             <div

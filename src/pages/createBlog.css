@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .inputField {
+        @apply mb-2 py-[12px] px-[14px] w-[288px] h-[44px] text-greyText text-sm font-normal border rounded-xl focus:outline-none bg-greyFill focus:border-indigo  focus:bg-backGround;
+    }
+    .inputFieldError {
+        @apply mb-2 py-[12px] px-[14px] w-[288px] h-[44px] text-greyText text-sm font-normal border border-error rounded-xl focus:outline-none  bg-errorLight focus:border-indigo  focus:bg-backGround;
+    }
+    .inputFieldSuccess {
+        @apply mb-2 py-[12px] px-[14px] w-[288px] h-[44px] text-greyText text-sm font-normal border border-success rounded-xl focus:outline-none  bg-successLight focus:border-indigo  focus:bg-backGround;
+    }
+
+    .inputLabel {
+        @apply font-medium text-sm w-fit  mb-[8px];
+    }
+
+    .defaultMessage {
+        @apply font-normal  text-xs text-greyText;
+    }
+
+    .errorMessage {
+        @apply font-normal  text-xs text-error;
+    }
+
+    .successMessage {
+        @apply font-normal  text-xs text-success;
+    }
+}

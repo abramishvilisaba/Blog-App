@@ -1,8 +1,6 @@
 import React from "react";
 
 const Card = ({ blog }) => {
-    console.log(blog);
-
     return (
         <div className="w-full sm:w-1/1 md:w-1/2 lg:w-1/3 p-4 h-[620px]">
             <div className=" rounded-xl">

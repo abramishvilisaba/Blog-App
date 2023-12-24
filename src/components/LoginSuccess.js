@@ -9,7 +9,7 @@ const LoginSuccess = ({ onClose }) => {
             <p className="text-[18px] font-semibold mt-2 mb-12 w-fit">წარმატებული ავტორიზაცია</p>
             <button
                 onClick={onClose}
-                className="bg-primary hover:bg-[#2522ea] text-white font-medium w-full px-4 py-2 mb-4  rounded-xl"
+                className="bg-indigo hover:bg-[#2522ea] text-white font-medium w-full px-4 py-2 mb-4  rounded-xl"
             >
                 კარგი
             </button>

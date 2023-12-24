@@ -37,13 +37,13 @@ const LoginForm = ({ onSubmit }) => {
                 <Form className="h-full">
                     <div className="h-full flex flex-col justify-around">
                         <div>
-                            <h2 className="text-center font-bold text-2xl pt-2 pb-8">შესვლა</h2>
+                            <h2 className="text-center font-bold text-2xl pt-4 pb-8">შესვლა</h2>
                             <p className="text-[18px] font-medium mb-2 w-fit">ელ-ფოსტა</p>
                             <Field
                                 // type="email"
                                 name="email"
                                 placeholder="example@redberry.ge"
-                                className="border-2   border-primary outline-none w-full rounded-xl h-[44px] px-2 py-1"
+                                className="border-2   border-indigo outline-none w-full rounded-xl h-[44px] px-2 py-1"
                                 style={{
                                     border: `2px solid ${
                                         errors.email ? "rgb(234 25 25 )" : " rgb(81 43 231) "
@@ -65,7 +65,7 @@ const LoginForm = ({ onSubmit }) => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="bg-primary hover:bg-[#2522ea] text-white font-medium w-full px-4 py-2 mt-4 rounded-xl"
+                            className="bg-indigo hover:bg-[#2522ea] text-white font-medium w-full px-4 py-2 mt-4 rounded-xl"
                         >
                             {isSubmitting ? "იტვირთება..." : "შესვლა"}
                         </button>
