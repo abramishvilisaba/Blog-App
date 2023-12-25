@@ -4,13 +4,13 @@
 
 @layer components {
     .inputField {
-        @apply mb-2 py-[12px] px-[14px] w-[288px] h-[44px] text-greyText text-sm font-normal border rounded-xl focus:outline-none bg-greyFill focus:border-indigo  focus:bg-backGround;
+        @apply w-[288px] h-[44px] mb-2  py-[12px] px-[14px]  text-greyText text-sm font-normal border rounded-xl focus:outline-none bg-greyFill focus:border-indigo  focus:bg-backGround;
     }
     .inputFieldError {
-        @apply mb-2 py-[12px] px-[14px] w-[288px] h-[44px] text-greyText text-sm font-normal border border-error rounded-xl focus:outline-none  bg-errorLight focus:border-indigo  focus:bg-backGround;
+        @apply w-[288px] h-[44px] mb-2 py-[12px] px-[14px]  text-greyText text-sm font-normal border border-error rounded-xl focus:outline-none  bg-errorLight focus:border-indigo  focus:bg-backGround;
     }
     .inputFieldSuccess {
-        @apply mb-2 py-[12px] px-[14px] w-[288px] h-[44px] text-greyText text-sm font-normal border border-success rounded-xl focus:outline-none  bg-successLight focus:border-indigo  focus:bg-backGround;
+        @apply w-[288px] h-[44px] mb-2 py-[12px] px-[14px]  text-greyText text-sm font-normal border border-success rounded-xl focus:outline-none  bg-successLight focus:border-indigo  focus:bg-backGround;
     }
 
     .inputLabel {

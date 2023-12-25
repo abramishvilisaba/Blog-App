@@ -20,7 +20,7 @@ const CreateBlog = () => {
             title: "",
             description: "",
             publish_date: "",
-            categories: "",
+            categories: [],
             email: "",
         },
         onSubmit: (values) => {
@@ -46,9 +46,9 @@ const CreateBlog = () => {
             if (values.description && values.description.length < 2) {
                 errors.description = "მინიმუმ 2 სიმბოლო";
             }
-            if (values.publish_date) {
-                errors.publish_date = "თარიღი აუცილებელია";
-            }
+            // if (!values.publish_date) {
+            //     errors.publish_date = "თარიღი აუცილებელია";
+            // }
             if (values.email && !values.email.endsWith("@redberry.ge")) {
                 errors.email = "ელ. ფოსტა უნდა მთავრდებოდეს @redberry.ge-ით";
             }
@@ -67,6 +67,8 @@ const CreateBlog = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [image, setImage] = useState(null);
+    const [imageName, setImageName] = useState("");
+
     const hasFilledValues = _.some(formik.values, (value) => !_.isEmpty(value));
 
     useEffect(() => {
@@ -90,7 +92,29 @@ const CreateBlog = () => {
         reader.readAsDataURL(file);
     }
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     function dataUrlToBlob(dataUrl) {
+    //         if (dataUrl) {
+    //             const parts = dataUrl.split(";base64,");
+    //             const contentType = parts[0].split(":")[1];
+    //             const byteCharacters = atob(parts[1]);
+    //             const byteArrays = [];
+    //             for (let i = 0; i < byteCharacters.length; i++) {
+    //                 byteArrays.push(byteCharacters.charCodeAt(i));
+    //             }
+    //             const byteArray = new Uint8Array(byteArrays);
+    //             return new Blob([byteArray], { type: contentType });
+    //         }
+    //     }
+    //     const dataUrl = sessionStorage.getItem("blogImage");
+    //     const blob = dataUrlToBlob(dataUrl);
+    //     const file1 = new File([blob], "blogImage", { type: "image/png" });
+    //     setImage(file1);
+    // }, []);
+
+    function createImageBlobFromDataUrl(imageName = "blogImage", imageType = "image/png") {
+        const dataUrl = sessionStorage.getItem("blogImage");
+
         function dataUrlToBlob(dataUrl) {
             if (dataUrl) {
                 const parts = dataUrl.split(";base64,");
@@ -103,13 +127,12 @@ const CreateBlog = () => {
                 const byteArray = new Uint8Array(byteArrays);
                 return new Blob([byteArray], { type: contentType });
             }
+            return new File([new Blob()], imageName, { type: imageType });
         }
-        const dataUrl = sessionStorage.getItem("blogImage");
+
         const blob = dataUrlToBlob(dataUrl);
-        const file1 = new File([blob], "blogImage", { type: "image/png" });
-        setImage(file1);
-        console.log("image", file1);
-    }, []);
+        return new File([blob], imageName, { type: imageType });
+    }
 
     useEffect(() => {
         formik.values.image = image;
@@ -117,10 +140,10 @@ const CreateBlog = () => {
 
     const saveDataToStorage = (data) => {
         try {
+            console.log("saveDataToStorage", data);
             if (data.image) {
                 saveImageToSessionStorage(data.image);
             }
-            // sessionStorage.setItem("blogImage", JSON.stringify(data.image) ? data.image : null);
             const formDataString = JSON.stringify(data);
             sessionStorage.setItem("blogFormData", formDataString);
         } catch (error) {
@@ -142,23 +165,42 @@ const CreateBlog = () => {
 
         const savedFormData = JSON.parse(sessionStorage.getItem("blogFormData"));
         console.log("savedFormData", savedFormData);
+        console.log(formik.values);
+        // formik.values = savedFormData;
+        // formik.setValues((prevValues) => ({
+        //     ...prevValues,
+        //     ...savedFormData,
+        // }));
 
-        formik.values = savedFormData;
-        // formik.setValues(savedFormData);
+        if (savedFormData) {
+            if (savedFormData.image) {
+                console.log("savedFormData.image", savedFormData.image);
+                console.log(savedFormData.image.name || savedFormData.image.path);
+                setImageName(savedFormData.image.path);
+                const imageBlob = createImageBlobFromDataUrl(
+                    savedFormData.image.name || savedFormData.image.path,
+                    savedFormData.image.type
+                );
+                setImage(imageBlob);
+            }
 
-        if (selectedCategories.length === 0) {
-            if (savedFormData) {
-                setSelectedCategories(savedFormData.categories);
+            const updatedValues = _.merge({}, formik.values, savedFormData);
+            formik.values = updatedValues;
+        }
+
+        if (selectedCategories) {
+            if (selectedCategories.length === 0) {
+                if (savedFormData) {
+                    setSelectedCategories(savedFormData.categories);
+                }
             }
         }
     }, []);
 
     const handleCategorySelection = (categoryId) => {
-        console.log("handleCategorySelection");
         if (!selectedCategories.includes(categoryId)) {
             const updatedCategories = [...selectedCategories, categoryId];
             setSelectedCategories(updatedCategories);
-            console.log(updatedCategories);
             formik.values.categories = updatedCategories;
         }
     };
@@ -166,11 +208,13 @@ const CreateBlog = () => {
     const handleChipRemoval = (categoryId) => {
         const updatedCategories = selectedCategories.filter((catId) => catId !== categoryId);
         setSelectedCategories(updatedCategories);
-        console.log(updatedCategories);
         formik.values.categories = updatedCategories;
     };
 
     const handleDrop = (acceptedFiles) => {
+        if (acceptedFiles[0]) {
+            setImageName(acceptedFiles[0].name);
+        }
         formik.setValues({
             ...formik.values,
             image: acceptedFiles[0],
@@ -208,7 +252,7 @@ const CreateBlog = () => {
     };
 
     console.log(formik.values);
-    console.log(selectedCategories);
+    // console.log(formik.values.categories);
 
     return (
         <div className="bg-backGround h-fit pb-40">
@@ -232,24 +276,38 @@ const CreateBlog = () => {
                     className=" w-full "
                 >
                     <div className="flex flex-col gap-6 h-[768px] justify-start">
-                        <section>
-                            <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
-                            <div
-                                // className="box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center
-                                //          bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer "
-                                {...getRootProps({
-                                    className:
-                                        "dropzone box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer",
-                                })}
-                            >
-                                <input {...getInputProps()} />
-                                <img src={folderAdd} alt="folderAdd" className="h-10 w-10"></img>
-                                <div className="flex felx-row gap-1">
-                                    <h3 className="text-sm font-normal">ჩააგდეთ ფაილი აქ ან </h3>
-                                    <h3 className="text-sm font-medium underline">აირჩიეთ ფაილი</h3>
-                                </div>
+                        {!formik.values.image ? (
+                            <div>
+                                {/* {formik.values.image.name}
+                                {formik.values.image.type} */}
                             </div>
-                        </section>
+                        ) : (
+                            <section>
+                                <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
+                                <div
+                                    // className="box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center
+                                    //          bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer "
+                                    {...getRootProps({
+                                        className:
+                                            "dropzone box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer",
+                                    })}
+                                >
+                                    <input {...getInputProps()} />
+                                    <img
+                                        src={folderAdd}
+                                        alt="folderAdd"
+                                        className="h-10 w-10"
+                                    ></img>
+                                    <div className="flex felx-row gap-1">
+                                        <h3 className="text-sm font-normal">ჩააგდეთ ფაილი აქ ან</h3>
+                                        <h3 className="text-sm font-medium underline">
+                                            აირჩიეთ ფაილი
+                                        </h3>
+                                        {imageName}
+                                    </div>
+                                </div>
+                            </section>
+                        )}
                         <div className=" flex flex-row justify-between h-[140px]">
                             <div className="flex flex-col justify-start h-[140px] ">
                                 <p class="inputLabel">ავტორი *</p>
@@ -366,9 +424,9 @@ const CreateBlog = () => {
                             <p
                                 className="font-normal text-greyText text-xs"
                                 class={
-                                    formik.errors.title
+                                    formik.errors.description
                                         ? "errorMessage"
-                                        : formik.values.title
+                                        : formik.values.description
                                         ? "successMessage"
                                         : "defaultMessage"
                                 }
@@ -377,15 +435,23 @@ const CreateBlog = () => {
                             </p>
                         </div>
                         <div className=" flex flex-row justify-between h-[72px]">
-                            <div className="flex flex-col justify-start h-full">
+                            <div className="flex flex-col justify-start">
                                 <p class="inputLabel">გამოქვეყნების თარიღი *</p>
                                 <input
                                     type="date"
                                     name="publish_date"
                                     placeholder="შეიყვანეთ თარიღი"
-                                    className="px-[14px] w-[288px] h-[44px] text-sm text-greyText font-normal 
-                                            border rounded-xl focus:outline-none focus:border-indigo-500"
-                                    style={{ backgroundColor: "rgb(252 252 253)" }}
+                                    class={
+                                        formik.errors.publish_date
+                                            ? "inputFieldError"
+                                            : formik.values.publish_date
+                                            ? "inputFieldSuccess"
+                                            : "inputField"
+                                    }
+                                    style={{ margin: "0px" }}
+                                    // className="px-[14px] w-[288px] h-[44px] text-sm text-greyText font-normal
+                                    //         border rounded-xl focus:outline-none focus:border-indigo-500"
+
                                     // validate={validateDate}
                                     onChange={formik.handleChange}
                                     value={formik.values.publish_date}
@@ -396,6 +462,7 @@ const CreateBlog = () => {
                                 <CategoryDropdown
                                     categories={categories}
                                     selectedCategories={selectedCategories}
+                                    // selectedCategories={formik.values.categories}
                                     handleChipRemoval={handleChipRemoval}
                                     handleCategorySelection={handleCategorySelection}
                                     showDropdown={showDropdown}
@@ -420,18 +487,20 @@ const CreateBlog = () => {
                                 value={formik.values.email}
                                 // validate={validateEmail}
                             />
-                            <p
-                                className="font-normal text-greyText text-xs"
-                                class={
-                                    formik.errors.email
-                                        ? "errorMessage"
-                                        : formik.values.email
-                                        ? "successMessage"
-                                        : "defaultMessage"
-                                }
-                            >
-                                მეილი უნდა მთავრდებოდეს @redberry.ge-ით
-                            </p>
+                            {formik.errors.email && (
+                                <p
+                                    className="font-normal text-greyText text-xs"
+                                    class={
+                                        formik.errors.email
+                                            ? "errorMessage"
+                                            : formik.values.email
+                                            ? "successMessage"
+                                            : "defaultMessage"
+                                    }
+                                >
+                                    მეილი უნდა მთავრდებოდეს @redberry.ge-ით
+                                </p>
+                            )}
                         </div>
                     </div>
                     <div className="w-full flex justify-end mt-10">

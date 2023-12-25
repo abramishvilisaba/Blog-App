@@ -10,13 +10,21 @@ const CategoryDropdown = ({
     setShowDropdown,
 }) => {
     return (
-        <div className="dropdown-box ">
+        <div className="dropdown-box relative inline-block ">
             <div
-                className="dropdown-header w-[288px] h-[44px] overflow-clip  text-center flex gap-1 
+                className="dropdown-header w-[288px] h-[44px] overflow-clip  text-center flex gap-1  
                         text-greyText font-normal border  rounded-xl focus:outline-none focus:border-indigo-500"
                 style={{
-                    borderColor: showDropdown ? "rgb(93 55 243)" : " rgb(228 227 235)",
-                    backgroundColor: showDropdown ? "rgb(251 250 255)" : "rgb(252 252 253)",
+                    borderColor: showDropdown
+                        ? "rgb(93 55 243)"
+                        : selectedCategories.length > 0
+                        ? " #14D81C"
+                        : "rgb(228 227 235)",
+                    backgroundColor: showDropdown
+                        ? "rgb(251 250 255)"
+                        : selectedCategories.length > 0
+                        ? " #F8FFF8"
+                        : "rgb(252 252 253)",
                 }}
             >
                 <div className="w-[268px] flex flex-row overflow-hidden p-[6px] gap-1">
