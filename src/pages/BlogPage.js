@@ -1,0 +1,191 @@
+import React, { useState, useEffect, useRef } from "react";
+import { getBlogById, getCategories, getAllBlogs } from "../api/blogAPI";
+import CategoryDropdown from "../components/CategoryDropdown";
+import Card from "../components/Card";
+import Navbar from "../components/Navbar";
+import Brand from "../images/Blog.png";
+import { useParams, Link } from "react-router-dom";
+import close from "../images/close.png";
+import Arrow2 from "../images/Arrow2.svg";
+
+const Home = () => {
+    let { id } = useParams();
+
+    const [blogs, setBlogs] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [blog, setBlog] = useState("");
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const nextSlide = () => {
+        setCurrentSlide((prevSlide) => (prevSlide === blogs.length - 3 ? 0 : prevSlide + 1));
+    };
+
+    const prevSlide = () => {
+        setCurrentSlide((prevSlide) => (prevSlide === 0 ? blogs.length - 3 : prevSlide - 1));
+    };
+
+    useEffect(() => {
+        const fetchBlogs = async () => {
+            try {
+                const response = await getAllBlogs();
+                const filteredBlogs = response.data.filter(
+                    (blog) => !blog.publish_date || new Date(blog.publish_date) <= new Date()
+                );
+                setBlogs(filteredBlogs);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        const fetchCategories = async () => {
+            try {
+                const response = await getCategories();
+                setCategories(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        const fetchBlogById = async (id) => {
+            try {
+                const response = await getBlogById(id);
+                setBlog(response);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchBlogs();
+        fetchCategories();
+        fetchBlogById(id);
+        console.log("scroll");
+    }, [id]);
+
+    const scrollToRef = useRef(null);
+
+    useEffect(() => {
+        scrollToRef.current.scrollIntoView({ behavior: "smooth" });
+    }, [id]);
+
+    return (
+        <div className=" min-h-screen bg-[#F3F2FA]" ref={scrollToRef}>
+            <Navbar />
+            <div className="h-fit px-[0%] mt-20 ">
+                <div className="flex flex-row pt-10">
+                    <div className="w-[25%] ">
+                        <div className="h-[44px] w-[44px] ml-[76px]">
+                            <Link to={"/"}>
+                                <img src={Arrow2} alt="Arrow2" className="h-[44px] w-[44px]" />
+                            </Link>
+                        </div>
+                    </div>
+                    <div className="h-fit w-[50%]   flex flex-row justify-center  ">
+                        <div className="h-fit w-[720px]    flex flex-row justify-center  ">
+                            {blog && (
+                                <div className="w-full   h-[fit] mb-[20px]">
+                                    <div className=" rounded-xl w-full">
+                                        <img
+                                            src={blog.image}
+                                            alt={`Image for ${blog.title}`}
+                                            className="w-full aspect-[2.22/1] object-cover rounded-2xl"
+                                        />
+                                        <div className="mt-4">
+                                            {/* <h2 className="text-xl font-semibold mb-2">{blog.title}</h2> */}
+                                            <p className="w-fit text-black text-base font-medium mb-0">
+                                                {" "}
+                                                {blog.author}
+                                            </p>
+                                            <div className="flex flex-row mb-1">
+                                                <p className="w-fit text-grayText font-light text-xs ">
+                                                    {blog.publish_date}
+                                                </p>
+                                                {blog.email && (
+                                                    <ul className="list-disc text-xs pl-[22px]  ">
+                                                        <li className="w-fit text-grayText font-light text-xs ">
+                                                            {blog.email}
+                                                        </li>
+                                                    </ul>
+                                                )}
+                                            </div>
+
+                                            <p className="w-fit text-black font-bold  text-xl mb-6">
+                                                EOMM-ის მრჩეველთა საბჭოს ნინო ეგაძე შეუერთდა
+                                            </p>
+                                            <div
+                                                className="w-full flex  xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-start mb-10
+                                            overflow-auto scrollbar-thin scrollbar-track-transparent  overflow-y-hidden"
+                                            >
+                                                {blog.categories.length > 0 &&
+                                                    blog.categories.map((category) => (
+                                                        <div
+                                                            key={category.id}
+                                                            className="cursor-pointer w-fit h-fit whitespace-nowrap rounded-full border-1 border-solid"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    `${category?.background_color}15` ||
+                                                                    "black",
+                                                            }}
+                                                        >
+                                                            <h3
+                                                                style={{
+                                                                    color:
+                                                                        `${category?.background_color}` ||
+                                                                        "white",
+                                                                    // filter: "brightness(80%)",
+                                                                }}
+                                                                className="w-fit font-medium text-xs px-3 py-1.5"
+                                                            >
+                                                                {category.title}
+                                                            </h3>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                            <p className="w-fit text-darkGrayText text-base leading-7 font-regular mb-4 flex overflow-hidden   ">
+                                                {blog.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="w-[25%]"></div>
+                </div>
+                <div>
+                    <div className="w-4/5 m-auto">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-[32px] font-bold">მსგავსი სტატიები</h2>
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={prevSlide}
+                                    className="bg-gray-200 px-2 py-1 rounded"
+                                    disabled={currentSlide === 0}
+                                >
+                                    Left
+                                </button>
+                                <button
+                                    onClick={nextSlide}
+                                    className="bg-gray-200 px-2 py-1 rounded"
+                                >
+                                    Right
+                                </button>
+                            </div>
+                        </div>
+                        <div className="overflow-x-auto flex space-x-4">
+                            {blogs
+                                .filter((blog) => blog.id != id)
+                                .slice(currentSlide, currentSlide + 3)
+                                .map((blog) => (
+                                    <Card key={blog.id} blog={blog} />
+                                ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Home;

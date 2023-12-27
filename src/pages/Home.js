@@ -11,11 +11,36 @@ const Home = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
+    // useEffect(() => {
+    //     const fetchBlogs = async () => {
+    //         try {
+    //             const response = await getAllBlogs();
+    //             setBlogs(response.data);
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     };
+
+    //     const fetchCategories = async () => {
+    //         try {
+    //             const response = await getCategories();
+    //             setCategories(response.data);
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     };
+
+    //     fetchBlogs();
+    //     fetchCategories();
+    // }, []);
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
                 const response = await getAllBlogs();
-                setBlogs(response.data);
+                const filteredBlogs = response.data.filter(
+                    (blog) => !blog.publish_date || new Date(blog.publish_date) <= new Date()
+                );
+                setBlogs(filteredBlogs);
             } catch (error) {
                 console.log(error);
             }
@@ -32,7 +57,15 @@ const Home = () => {
 
         fetchBlogs();
         fetchCategories();
+
+        const storedSelectedCategories =
+            JSON.parse(sessionStorage.getItem("selectedCategories")) || [];
+        setSelectedCategories(storedSelectedCategories);
     }, []);
+
+    useEffect(() => {
+        sessionStorage.setItem("selectedCategories", JSON.stringify(selectedCategories));
+    }, [selectedCategories]);
 
     const handleCategorySelection = (categoryId) => {
         if (!selectedCategories.includes(categoryId)) {
@@ -55,10 +88,9 @@ const Home = () => {
         }
     };
 
-    console.log(selectedCategories);
-
     return (
-        <div className=" min-h-screen bg-[#F3F2FA] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <div className=" min-h-screen bg-[#F3F2FA] pb-20 ">
+            {/* <div class="font-firaGO h-screen box-border scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 overflow-y-scroll scrollbar-thumb-rounded-full scrollbar-track-rounded-full"> */}
             <Navbar />
             <div className="h-fit px-[6%] ">
                 <div className="h-[250px] mt-[80px] pt-8 flex flex-row justify-between ">
@@ -80,7 +112,7 @@ const Home = () => {
                                     borderColor: selectedCategories.includes(category.id)
                                         ? "black"
                                         : "#F3F2FA",
-                                    backgroundColor: `${category?.background_color}15` || "black",
+                                    backgroundColor: `${category?.background_color}15` || "gray",
                                 }}
                             >
                                 <h3
@@ -89,7 +121,7 @@ const Home = () => {
 
                                         // filter: "brightness(80%)",
                                     }}
-                                    className="w-fit font-medium text-sm px-3 py-2"
+                                    className="w-fit font-medium text-xs px-3 py-2"
                                 >
                                     {category.title}
                                 </h3>
@@ -106,7 +138,11 @@ const Home = () => {
                                           selectedCategories.includes(cat.id)
                                       )
                             )
-                            .map((blog) => <Card key={blog.id} blog={blog} />)}
+                            .map((blog) => (
+                                <div className="w-full sm:w-1/1 md:w-1/2 lg:w-1/3 p-4 h-[620px] mb-[20px]">
+                                    <Card key={blog.id} blog={blog} />
+                                </div>
+                            ))}
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@ const CategoryDropdown = ({
         <div className="dropdown-box relative inline-block ">
             <div
                 className="dropdown-header w-[288px] h-[44px] overflow-clip  text-center flex gap-1  
-                        text-greyText font-normal border  rounded-xl focus:outline-none focus:border-indigo-500"
+                        text-grayText font-normal border  rounded-xl focus:outline-none focus:border-indigo-500"
                 style={{
                     borderColor: showDropdown
                         ? "rgb(93 55 243)"

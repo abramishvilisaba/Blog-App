@@ -3,6 +3,9 @@ import axios from "axios";
 import Arrow from "../images/Arrow.png";
 import LOGO from "../images/LOGO.png";
 import folderAdd from "../images/folderAdd.png";
+import infoCircle from "../images/infoCircle.svg";
+import close from "../images/close.png";
+
 import { getAllBlogs, getCategories } from "../api/blogAPI";
 import CategoryDropdown from "../components/CategoryDropdown";
 import "./createBlog.css";
@@ -10,6 +13,10 @@ import { useFormik } from "formik";
 import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import _ from "lodash";
+import { Link, useNavigate } from "react-router-dom";
+import LoginForm from "../components/LoginForm";
+import LoginSuccess from "../components/LoginSuccess";
+
 const token = process.env.REACT_APP_TOKEN;
 
 const CreateBlog = () => {
@@ -66,10 +73,16 @@ const CreateBlog = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
     const [image, setImage] = useState(null);
-    const [imageName, setImageName] = useState("");
+
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    };
 
     const hasFilledValues = _.some(formik.values, (value) => !_.isEmpty(value));
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -82,15 +95,6 @@ const CreateBlog = () => {
         };
         fetchCategories();
     }, []);
-
-    function saveImageToSessionStorage(file) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const imageBlob = event.target.result;
-            sessionStorage.setItem("blogImage", imageBlob);
-        };
-        reader.readAsDataURL(file);
-    }
 
     // useEffect(() => {
     //     function dataUrlToBlob(dataUrl) {
@@ -112,9 +116,19 @@ const CreateBlog = () => {
     //     setImage(file1);
     // }, []);
 
+    function saveImageToSessionStorage(file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const imageBlob = event.target.result;
+            sessionStorage.setItem("blogImage", imageBlob);
+            // sessionStorage.setItem("blogImage", imageBlob);
+            console.log(file.name);
+        };
+        reader.readAsDataURL(file);
+    }
+
     function createImageBlobFromDataUrl(imageName = "blogImage", imageType = "image/png") {
         const dataUrl = sessionStorage.getItem("blogImage");
-
         function dataUrlToBlob(dataUrl) {
             if (dataUrl) {
                 const parts = dataUrl.split(";base64,");
@@ -129,20 +143,20 @@ const CreateBlog = () => {
             }
             return new File([new Blob()], imageName, { type: imageType });
         }
-
         const blob = dataUrlToBlob(dataUrl);
         return new File([blob], imageName, { type: imageType });
     }
 
-    useEffect(() => {
-        formik.values.image = image;
-    }, [image]);
+    // useEffect(() => {
+    //     formik.values.image = image;
+    // }, [image]);
 
     const saveDataToStorage = (data) => {
         try {
             console.log("saveDataToStorage", data);
             if (data.image) {
-                saveImageToSessionStorage(data.image);
+                // saveImageToSessionStorage(data.image);
+                saveImageToSessionStorage(image);
             }
             const formDataString = JSON.stringify(data);
             sessionStorage.setItem("blogFormData", formDataString);
@@ -153,7 +167,6 @@ const CreateBlog = () => {
 
     useEffect(() => {
         if (hasFilledValues) {
-            console.log("saveDataToStorage");
             saveDataToStorage(formik.values);
         }
     }, [formik.values, selectedCategories]);
@@ -167,18 +180,16 @@ const CreateBlog = () => {
         console.log("savedFormData", savedFormData);
         console.log(formik.values);
         // formik.values = savedFormData;
-        // formik.setValues((prevValues) => ({
-        //     ...prevValues,
-        //     ...savedFormData,
-        // }));
+        formik.setValues((prevValues) => ({
+            ...prevValues,
+            ...savedFormData,
+        }));
 
         if (savedFormData) {
             if (savedFormData.image) {
                 console.log("savedFormData.image", savedFormData.image);
-                console.log(savedFormData.image.name || savedFormData.image.path);
-                setImageName(savedFormData.image.path);
                 const imageBlob = createImageBlobFromDataUrl(
-                    savedFormData.image.name || savedFormData.image.path,
+                    savedFormData.image.name,
                     savedFormData.image.type
                 );
                 setImage(imageBlob);
@@ -213,12 +224,16 @@ const CreateBlog = () => {
 
     const handleDrop = (acceptedFiles) => {
         if (acceptedFiles[0]) {
-            setImageName(acceptedFiles[0].name);
+            console.log(acceptedFiles[0].name);
+            setImage(acceptedFiles[0]);
+            formik.setValues({
+                ...formik.values,
+                image: {
+                    name: acceptedFiles[0].name,
+                    path: acceptedFiles[0].path,
+                },
+            });
         }
-        formik.setValues({
-            ...formik.values,
-            image: acceptedFiles[0],
-        });
     };
 
     useEffect(() => {
@@ -232,6 +247,7 @@ const CreateBlog = () => {
         // Object.entries(formik.values).forEach(([key, value]) => {
         //     formDataToSend.append(key, value);
         // });
+        formik.values.image = image;
         console.log("submit");
         console.log(formik.values);
         try {
@@ -248,6 +264,9 @@ const CreateBlog = () => {
             console.log("Blog created:", response.data);
         } catch (error) {
             console.log("Error creating blog:", error);
+        } finally {
+            console.log("togglePopup");
+            togglePopup();
         }
     };
 
@@ -261,7 +280,11 @@ const CreateBlog = () => {
             </div>
             <div className="flex flex-row h-fit pt-10">
                 <div className="w-[35%]  pl-[76px]">
-                    <img src={Arrow} alt="Arrow" className="h-[44px] w-[44px] " />
+                    <div className="h-[44px] w-[44px]">
+                        <Link to={"/"}>
+                            <img src={Arrow} alt="Arrow" className="h-[44px] w-[44px]" />
+                        </Link>
+                    </div>
                 </div>
                 <div className="w-[600px] text-left  ">
                     <h1 className="w-fit  font-bold text-[32px]">ბლოგის დამატება</h1>
@@ -275,12 +298,33 @@ const CreateBlog = () => {
                     }}
                     className=" w-full "
                 >
-                    <div className="flex flex-col gap-6 h-[768px] justify-start">
-                        {!formik.values.image ? (
-                            <div>
-                                {/* {formik.values.image.name}
-                                {formik.values.image.type} */}
-                            </div>
+                    <div className="flex flex-col gap-6 h-[fit] justify-start">
+                        {formik.values.image ? (
+                            // <div>{formik.values.image.name} </div>
+                            <section>
+                                <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
+                                <div
+                                    // className="box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center
+                                    //          bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer "
+                                    {...getRootProps({
+                                        className:
+                                            "dropzone box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer",
+                                    })}
+                                >
+                                    <input {...getInputProps()} />
+                                    <img
+                                        src={folderAdd}
+                                        alt="folderAdd"
+                                        className="h-10 w-10"
+                                    ></img>
+                                    <div className="flex felx-row gap-1">
+                                        <h3 className="text-sm font-normal">ჩააგდეთ ფაილი აქ ან</h3>
+                                        <h3 className="text-sm font-medium underline">
+                                            აირჩიეთ ფაილი
+                                        </h3>
+                                    </div>
+                                </div>
+                            </section>
                         ) : (
                             <section>
                                 <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
@@ -303,7 +347,6 @@ const CreateBlog = () => {
                                         <h3 className="text-sm font-medium underline">
                                             აირჩიეთ ფაილი
                                         </h3>
-                                        {imageName}
                                     </div>
                                 </div>
                             </section>
@@ -383,7 +426,7 @@ const CreateBlog = () => {
                                     }
                                 />
                                 <p
-                                    className="font-normal text-greyText text-xs"
+                                    className="font-normal text-grayText text-xs"
                                     class={
                                         formik.errors.title
                                             ? "errorMessage"
@@ -422,7 +465,7 @@ const CreateBlog = () => {
                                 }}
                             />
                             <p
-                                className="font-normal text-greyText text-xs"
+                                className="font-normal text-grayText text-xs"
                                 class={
                                     formik.errors.description
                                         ? "errorMessage"
@@ -449,7 +492,7 @@ const CreateBlog = () => {
                                             : "inputField"
                                     }
                                     style={{ margin: "0px" }}
-                                    // className="px-[14px] w-[288px] h-[44px] text-sm text-greyText font-normal
+                                    // className="px-[14px] w-[288px] h-[44px] text-sm text-grayText font-normal
                                     //         border rounded-xl focus:outline-none focus:border-indigo-500"
 
                                     // validate={validateDate}
@@ -471,7 +514,7 @@ const CreateBlog = () => {
                             </div>
                         </div>
                         <div className="flex flex-col justify-start h-[fit]">
-                            <p class="inputLabel">გამოქვეყნების თარიღი *</p>
+                            <p class="inputLabel">ელ-ფოსტა</p>
                             <input
                                 type="text"
                                 name="email"
@@ -488,18 +531,39 @@ const CreateBlog = () => {
                                 // validate={validateEmail}
                             />
                             {formik.errors.email && (
-                                <p
-                                    className="font-normal text-greyText text-xs"
-                                    class={
-                                        formik.errors.email
-                                            ? "errorMessage"
-                                            : formik.values.email
-                                            ? "successMessage"
-                                            : "defaultMessage"
-                                    }
-                                >
-                                    მეილი უნდა მთავრდებოდეს @redberry.ge-ით
-                                </p>
+                                <div className="flex flex-row gap-1">
+                                    {formik.errors.title && (
+                                        <img
+                                            src={infoCircle}
+                                            alt="infoCircle"
+                                            className="h-5 w-5 mt-[-2px]"
+                                        />
+                                    )}
+                                    <p
+                                        // className="font-normal text-grayText text-xs "
+                                        class={
+                                            formik.errors.email
+                                                ? "errorMessage"
+                                                : formik.values.email
+                                                ? "successMessage"
+                                                : "defaultMessage"
+                                        }
+                                    >
+                                        მეილი უნდა მთავრდებოდეს @redberry.ge-ით
+                                    </p>
+                                </div>
+                                // <p
+                                //     className="font-normal text-grayText text-xs"
+                                //     class={
+                                //         formik.errors.email
+                                //             ? "errorMessage"
+                                //             : formik.values.email
+                                //             ? "successMessage"
+                                //             : "defaultMessage"
+                                //     }
+                                // >
+                                //     მეილი უნდა მთავრდებოდეს @redberry.ge-ით
+                                // </p>
                             )}
                         </div>
                     </div>
@@ -515,6 +579,24 @@ const CreateBlog = () => {
                         </button>
                     </div>
                 </form>
+                {showPopup && (
+                    <div className="fixed flex flex-col w-1/4 h-[300px] justify-between top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-2xl shadow-lg">
+                        <button
+                            onClick={togglePopup}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                        >
+                            {/* <FontAwesomeIcon icon={faTimes} /> */}
+                            <img src={close} alt="close" className="h-6 " />
+                        </button>
+                        <LoginSuccess
+                            onClose={() => {
+                                togglePopup, navigate("/");
+                            }}
+                            successText="ჩანაწერი წარმატებით დაემატა"
+                            buttonText="მთავარ გვერდზე დაბრუნება"
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
