@@ -11,11 +11,13 @@ const token = process.env.REACT_APP_TOKEN;
 
 export default function App() {
     return (
-        <Routes>
-            <Route path="/create" element={<CreateBlog />} />
-            <Route path="/blogpage/:id" element={<BlogPage />} />
-            <Route path="/*" element={<Home />} />
-        </Routes>
+        <div class="font-firaGO h-screen box-border  scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 overflow-y-scroll scrollbar-thumb-rounded-full scrollbar-track-rounded-full ">
+            <Routes>
+                <Route path="/create" element={<CreateBlog />} />
+                <Route path="/blogpage/:id" element={<BlogPage />} />
+                <Route path="/*" element={<Home />} />
+            </Routes>
+        </div>
 
         // <Home />
     );
