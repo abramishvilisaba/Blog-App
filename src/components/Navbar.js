@@ -6,7 +6,7 @@ import LoginForm from "./LoginForm";
 import LoginSuccess from "./LoginSuccess";
 import { apiLogin } from "../api/blogAPI";
 import { Link } from "react-router-dom";
-import close from "../images/close.png";
+import close from "../images/close.svg";
 
 const Navbar = () => {
     const [showPopup, setShowPopup] = useState(false);

@@ -1,5 +1,6 @@
 import React from "react";
 import arrowDown from "../images/arrowDown.png";
+import add from "../images/add.svg";
 
 const CategoryDropdown = ({
     categories,
@@ -40,9 +41,14 @@ const CategoryDropdown = ({
                                     // width: "fit",
                                     whiteSpace: "nowrap",
                                 }}
-                                className={`flex flex-row w-fit  items-center justify-between h-8 text-xs px-3 rounded-2xl overflow-visible  `}
+                                className={`flex flex-row w-fit  items-center justify-between h-8 text-xs px-3 rounded-2xl overflow-visible hover:cursor-pointer `}
                             >
                                 {category?.title}
+                                <img
+                                    src={add}
+                                    alt="add"
+                                    className="h-4 w-4 ml-[8px] text-white "
+                                ></img>
                             </span>
                         );
                     })}
@@ -75,7 +81,7 @@ const CategoryDropdown = ({
                                     width: "fit",
                                     whiteSpace: "nowrap",
                                 }}
-                                className={`flex items-center justify-between h-8 text-xs px-3 rounded-2xl`}
+                                className={`flex items-center justify-between h-8 text-xs px-3 rounded-2xl hover:cursor-pointer whitespace-nowrap w-max`}
                             >
                                 {category.title}
                             </span>

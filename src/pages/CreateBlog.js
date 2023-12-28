@@ -4,7 +4,8 @@ import Arrow from "../images/Arrow.png";
 import LOGO from "../images/LOGO.png";
 import folderAdd from "../images/folderAdd.png";
 import infoCircle from "../images/infoCircle.svg";
-import close from "../images/close.png";
+import close from "../images/close.svg";
+import gallery from "../images/gallery.svg";
 
 import { getAllBlogs, getCategories } from "../api/blogAPI";
 import CategoryDropdown from "../components/CategoryDropdown";
@@ -12,7 +13,7 @@ import "./createBlog.css";
 import { useFormik } from "formik";
 import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import _ from "lodash";
+import _, { isEmpty } from "lodash";
 import { Link, useNavigate } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 import LoginSuccess from "../components/LoginSuccess";
@@ -36,14 +37,17 @@ const CreateBlog = () => {
         validate: (values) => {
             const errors = {};
             if (values.author) {
-                errors.author = [];
+                // errors.author = [];
                 if (!values.author || values.author.length < 4) {
+                    !errors.author ? (errors.author = []) : null;
                     errors.author[0] = "მინიმუმ 4 სიმბოლო";
                 }
                 if (values.author.split(/\s+/).filter(Boolean).length < 2) {
+                    !errors.author ? (errors.author = []) : null;
                     errors.author[1] = "მინიმუმ ორი სიტყვა";
                 }
                 if (!/^[\u10D0-\u10F0\s]+$/.test(values.author)) {
+                    !errors.author ? (errors.author = []) : null;
                     errors.author[2] = "მხოლოდ ქართული სიმბოლოები";
                 }
             }
@@ -96,33 +100,13 @@ const CreateBlog = () => {
         fetchCategories();
     }, []);
 
-    // useEffect(() => {
-    //     function dataUrlToBlob(dataUrl) {
-    //         if (dataUrl) {
-    //             const parts = dataUrl.split(";base64,");
-    //             const contentType = parts[0].split(":")[1];
-    //             const byteCharacters = atob(parts[1]);
-    //             const byteArrays = [];
-    //             for (let i = 0; i < byteCharacters.length; i++) {
-    //                 byteArrays.push(byteCharacters.charCodeAt(i));
-    //             }
-    //             const byteArray = new Uint8Array(byteArrays);
-    //             return new Blob([byteArray], { type: contentType });
-    //         }
-    //     }
-    //     const dataUrl = localStorage.getItem("blogImage");
-    //     const blob = dataUrlToBlob(dataUrl);
-    //     const file1 = new File([blob], "blogImage", { type: "image/png" });
-    //     setImage(file1);
-    // }, []);
-
     function saveImageToLocalStorage(file) {
         const reader = new FileReader();
         reader.onload = function (event) {
             const imageBlob = event.target.result;
             localStorage.setItem("blogImage", imageBlob);
             // localStorage.setItem("blogImage", imageBlob);
-            console.log(file.name);
+            // console.log(file.name);
         };
         reader.readAsDataURL(file);
     }
@@ -153,7 +137,7 @@ const CreateBlog = () => {
 
     const saveDataToStorage = (data) => {
         try {
-            console.log("saveDataToStorage", data);
+            // console.log("saveDataToStorage", data);
             if (data.image) {
                 // saveImageToLocalStorage(data.image);
                 saveImageToLocalStorage(image);
@@ -247,33 +231,54 @@ const CreateBlog = () => {
         // Object.entries(formik.values).forEach(([key, value]) => {
         //     formDataToSend.append(key, value);
         // });
-        formik.values.image = image;
-        console.log("submit");
-        console.log(formik.values);
-        try {
-            const response = await axios.post(
-                "https://api.blog.redberryinternship.ge/api/blogs",
-                formik.values,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
-            );
-            console.log("Blog created:", response.data);
-        } catch (error) {
-            console.log("Error creating blog:", error);
-        } finally {
-            console.log("togglePopup");
-            localStorage.removeItem("blogFormData");
-            localStorage.removeItem("blogImage");
-            togglePopup();
+
+        if (areFieldsFilled(formik.values) && Object.keys(formik.errors).length == 0) {
+            formik.values.image = image;
+            // formik.values.categories = JSON.stringify(formik.values.categories);
+
+            console.log("submit");
+            console.log(formik.values);
+            try {
+                const response = await axios.post(
+                    "https://api.blog.redberryinternship.ge/api/blogs",
+                    formik.values,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+                console.log("Blog created:", response.data);
+            } catch (error) {
+                console.log("Error creating blog:", error);
+            } finally {
+                localStorage.removeItem("blogFormData");
+                localStorage.removeItem("blogImage");
+                togglePopup();
+            }
+        } else {
+            console.log("Error creating blog:");
         }
     };
 
+    function areFieldsFilled(fields) {
+        return _.every(fields, (value, key) => {
+            if (key !== "email" && (_.isEmpty(value) || value === null)) {
+                return false;
+            }
+            return true;
+        });
+    }
+
+    // console.log(formik.values);
+    // console.log("errors", formik.errors);
+
     console.log(formik.values);
-    // console.log(formik.values.categories);
+
+    const handleImageClose = () => {
+        formik.setFieldValue("image", null);
+    };
 
     return (
         <div className="bg-backGround h-fit pb-40">
@@ -333,10 +338,24 @@ const CreateBlog = () => {
                                 </section>
                             ) : (
                                 <div
-                                    className="w-[600px] h-[44px] mb-2 py-[12px] px-[14px] text-grayText text-sm font-normal
-                                                    border rounded-xl focus:outline-none bg-greyFill focus:border-indigo  focus:bg-backGround"
+                                    className="w-[600px] h-[44px] mb-2 py-[12px] px-[18px] text-black text-sm font-normal flex flex-row justify-between
+                                                     rounded-xl  bg-altGrayFill "
                                 >
-                                    {formik.values.image.name}
+                                    <div className="flex flex-row gap-2">
+                                        <img
+                                            src={gallery}
+                                            alt="gallery"
+                                            className="h-6 w-6 mt-[-2px]"
+                                        ></img>
+                                        {formik.values.image.name}
+                                    </div>
+
+                                    <img
+                                        src={close}
+                                        alt="close"
+                                        className="h-6 w-6 hover:cursor-pointer"
+                                        onClick={handleImageClose}
+                                    ></img>
                                 </div>
                             )}
                         </div>
@@ -562,9 +581,20 @@ const CreateBlog = () => {
                             onClick={() => {
                                 console.log(formik.values);
                             }}
-                            className="w-[288px] h-10 rounded-lg text-white bg-indigo"
+                            className="w-[288px] h-10 rounded-lg text-white text-sm font-medium "
+                            style={{
+                                backgroundColor:
+                                    !areFieldsFilled(formik.values) ||
+                                    !Object.keys(formik.errors).length == 0
+                                        ? "#E4E3EB"
+                                        : "rgb(93 55 243)",
+                            }}
+                            disabled={
+                                !areFieldsFilled(formik.values) ||
+                                !Object.keys(formik.errors).length == 0
+                            }
                         >
-                            Create Blog
+                            გამოქვეყნება
                         </button>
                     </div>
                 </form>

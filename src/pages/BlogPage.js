@@ -5,7 +5,7 @@ import Card from "../components/Card";
 import Navbar from "../components/Navbar";
 import Brand from "../images/Blog.png";
 import { useParams, Link } from "react-router-dom";
-import close from "../images/close.png";
+import close from "../images/close.svg";
 import Arrow2 from "../images/Arrow2.svg";
 import ArrowButtonRight from "../images/ArrowButtonRight.svg";
 import ArrowButtonLeft from "../images/ArrowButtonLeft.svg";

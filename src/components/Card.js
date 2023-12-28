@@ -17,8 +17,16 @@ const Card = ({ blog }) => {
                 <p className="w-fit text-black text-base font-medium mb-0"> {blog.author}</p>
                 <p className="w-fit text-grayText font-light text-xs mb-1">{blog.publish_date}</p>
 
-                <p className="w-fit text-black font-bold  text-xl mb-4">
-                    EOMM-ის მრჩეველთა საბჭოს ნინო ეგაძე შეუერთდა
+                <p
+                    className="w-fit text-black font-bold  text-xl mb-4 overflow-hidden"
+                    style={{
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 2,
+                        textOverflow: "ellipsis",
+                    }}
+                >
+                    {blog.title}
                 </p>
                 <div
                     className="w-full flex  xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-start mb-2
