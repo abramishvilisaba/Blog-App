@@ -6,7 +6,7 @@ const Card = ({ blog }) => {
     return (
         // <div className="w-full sm:w-1/1 md:w-1/2 lg:w-1/3 p-4 h-[620px] mb-[20px]">
 
-        <div className=" rounded-xl w-full">
+        <div className=" rounded-xl w-[408px] h-[620px]">
             <img
                 src={blog.image}
                 alt={`Image for ${blog.title}`}

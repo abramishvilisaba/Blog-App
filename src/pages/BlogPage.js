@@ -7,6 +7,9 @@ import Brand from "../images/Blog.png";
 import { useParams, Link } from "react-router-dom";
 import close from "../images/close.png";
 import Arrow2 from "../images/Arrow2.svg";
+import ArrowButtonRight from "../images/ArrowButtonRight.svg";
+import ArrowButtonLeft from "../images/ArrowButtonLeft.svg";
+import ArrowButtonInactive from "../images/ArrowButtonInactive.svg";
 
 const Home = () => {
     let { id } = useParams();
@@ -19,12 +22,14 @@ const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
 
     const nextSlide = () => {
-        setCurrentSlide((prevSlide) => (prevSlide === blogs.length - 3 ? 0 : prevSlide + 1));
+        setCurrentSlide((prevSlide) => (prevSlide === blogs.length - 4 ? 0 : prevSlide + 1));
     };
 
     const prevSlide = () => {
         setCurrentSlide((prevSlide) => (prevSlide === 0 ? blogs.length - 3 : prevSlide - 1));
     };
+    console.log(blogs.length);
+    console.log(currentSlide);
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -70,9 +75,9 @@ const Home = () => {
     }, [id]);
 
     return (
-        <div className=" min-h-screen bg-[#F3F2FA]" ref={scrollToRef}>
+        <div className=" min-h-screen bg-[#F3F2FA] pb-20" ref={scrollToRef}>
             <Navbar />
-            <div className="h-fit px-[0%] mt-20 ">
+            <div className="h-fit px-[0%] pt-20 ">
                 <div className="flex flex-row pt-10">
                     <div className="w-[25%] ">
                         <div className="h-[44px] w-[44px] ml-[76px]">
@@ -81,10 +86,10 @@ const Home = () => {
                             </Link>
                         </div>
                     </div>
-                    <div className="h-fit w-[50%]   flex flex-row justify-center  ">
+                    <div className="h-fit w-[50%] flex flex-row justify-center mb-[98px]  ">
                         <div className="h-fit w-[720px]    flex flex-row justify-center  ">
                             {blog && (
-                                <div className="w-full   h-[fit] mb-[20px]">
+                                <div className="w-full   h-[fit] ">
                                     <div className=" rounded-xl w-full">
                                         <img
                                             src={blog.image}
@@ -154,22 +159,35 @@ const Home = () => {
                     <div className="w-[25%]"></div>
                 </div>
                 <div>
-                    <div className="w-4/5 m-auto">
+                    <div className="w-fit m-auto">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-[32px] font-bold">მსგავსი სტატიები</h2>
+                            <h2 className="text-[32px] font-bold ">მსგავსი სტატიები</h2>
                             <div className="flex space-x-2">
                                 <button
                                     onClick={prevSlide}
-                                    className="bg-gray-200 px-2 py-1 rounded"
+                                    className="bg-gray-200 rounded-3xl"
                                     disabled={currentSlide === 0}
                                 >
-                                    Left
+                                    {currentSlide === 0 ? (
+                                        <img
+                                            src={ArrowButtonInactive}
+                                            alt="ArrowButtonInactive"
+                                            className="h-[44px] w-[44px]"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={ArrowButtonLeft}
+                                            alt="ArrowButtonLeft"
+                                            className="h-[44px] w-[44px]"
+                                        />
+                                    )}
                                 </button>
-                                <button
-                                    onClick={nextSlide}
-                                    className="bg-gray-200 px-2 py-1 rounded"
-                                >
-                                    Right
+                                <button onClick={nextSlide} className="bg-gray-200 rounded-3xl">
+                                    <img
+                                        src={ArrowButtonRight}
+                                        alt="ArrowButtonRight"
+                                        className="h-[44px] w-[44px]"
+                                    />
                                 </button>
                             </div>
                         </div>

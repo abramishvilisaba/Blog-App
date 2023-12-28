@@ -110,25 +110,25 @@ const CreateBlog = () => {
     //             return new Blob([byteArray], { type: contentType });
     //         }
     //     }
-    //     const dataUrl = sessionStorage.getItem("blogImage");
+    //     const dataUrl = localStorage.getItem("blogImage");
     //     const blob = dataUrlToBlob(dataUrl);
     //     const file1 = new File([blob], "blogImage", { type: "image/png" });
     //     setImage(file1);
     // }, []);
 
-    function saveImageToSessionStorage(file) {
+    function saveImageToLocalStorage(file) {
         const reader = new FileReader();
         reader.onload = function (event) {
             const imageBlob = event.target.result;
-            sessionStorage.setItem("blogImage", imageBlob);
-            // sessionStorage.setItem("blogImage", imageBlob);
+            localStorage.setItem("blogImage", imageBlob);
+            // localStorage.setItem("blogImage", imageBlob);
             console.log(file.name);
         };
         reader.readAsDataURL(file);
     }
 
     function createImageBlobFromDataUrl(imageName = "blogImage", imageType = "image/png") {
-        const dataUrl = sessionStorage.getItem("blogImage");
+        const dataUrl = localStorage.getItem("blogImage");
         function dataUrlToBlob(dataUrl) {
             if (dataUrl) {
                 const parts = dataUrl.split(";base64,");
@@ -155,13 +155,13 @@ const CreateBlog = () => {
         try {
             console.log("saveDataToStorage", data);
             if (data.image) {
-                // saveImageToSessionStorage(data.image);
-                saveImageToSessionStorage(image);
+                // saveImageToLocalStorage(data.image);
+                saveImageToLocalStorage(image);
             }
             const formDataString = JSON.stringify(data);
-            sessionStorage.setItem("blogFormData", formDataString);
+            localStorage.setItem("blogFormData", formDataString);
         } catch (error) {
-            console.log("Error saving FormData to sessionStorage:", error);
+            console.log("Error saving FormData to localStorage:", error);
         }
     };
 
@@ -172,11 +172,11 @@ const CreateBlog = () => {
     }, [formik.values, selectedCategories]);
 
     useEffect(() => {
-        // const storedImage = JSON.parse(sessionStorage.getItem("blogImage"));
-        // const storedImage = sessionStorage.getItem("blogImage");
+        // const storedImage = JSON.parse(localStorage.getItem("blogImage"));
+        // const storedImage = localStorage.getItem("blogImage");
         // savedFormData.image = storedImage;
 
-        const savedFormData = JSON.parse(sessionStorage.getItem("blogFormData"));
+        const savedFormData = JSON.parse(localStorage.getItem("blogFormData"));
         console.log("savedFormData", savedFormData);
         console.log(formik.values);
         // formik.values = savedFormData;
@@ -266,6 +266,8 @@ const CreateBlog = () => {
             console.log("Error creating blog:", error);
         } finally {
             console.log("togglePopup");
+            localStorage.removeItem("blogFormData");
+            localStorage.removeItem("blogImage");
             togglePopup();
         }
     };
@@ -299,58 +301,45 @@ const CreateBlog = () => {
                     className=" w-full "
                 >
                     <div className="flex flex-col gap-6 h-[fit] justify-start">
-                        {formik.values.image ? (
-                            // <div>{formik.values.image.name} </div>
-                            <section>
-                                <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
-                                <div
-                                    // className="box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center
-                                    //          bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer "
-                                    {...getRootProps({
-                                        className:
-                                            "dropzone box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer",
-                                    })}
-                                >
-                                    <input {...getInputProps()} />
-                                    <img
-                                        src={folderAdd}
-                                        alt="folderAdd"
-                                        className="h-10 w-10"
-                                    ></img>
-                                    <div className="flex felx-row gap-1">
-                                        <h3 className="text-sm font-normal">ჩააგდეთ ფაილი აქ ან</h3>
-                                        <h3 className="text-sm font-medium underline">
-                                            აირჩიეთ ფაილი
-                                        </h3>
+                        <div>
+                            <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
+
+                            {!formik.values.image ? (
+                                // <div>{formik.values.image.name} </div>
+                                <section>
+                                    <div
+                                        // className="box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center
+                                        //          bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer "
+                                        {...getRootProps({
+                                            className:
+                                                "dropzone box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer",
+                                        })}
+                                    >
+                                        <input {...getInputProps()} />
+                                        <img
+                                            src={folderAdd}
+                                            alt="folderAdd"
+                                            className="h-10 w-10"
+                                        ></img>
+                                        <div className="flex felx-row gap-1">
+                                            <h3 className="text-sm font-normal">
+                                                ჩააგდეთ ფაილი აქ ან
+                                            </h3>
+                                            <h3 className="text-sm font-medium underline">
+                                                აირჩიეთ ფაილი
+                                            </h3>
+                                        </div>
                                     </div>
-                                </div>
-                            </section>
-                        ) : (
-                            <section>
-                                <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
+                                </section>
+                            ) : (
                                 <div
-                                    // className="box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center
-                                    //          bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer "
-                                    {...getRootProps({
-                                        className:
-                                            "dropzone box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer",
-                                    })}
+                                    className="w-[600px] h-[44px] mb-2 py-[12px] px-[14px] text-grayText text-sm font-normal
+                                                    border rounded-xl focus:outline-none bg-greyFill focus:border-indigo  focus:bg-backGround"
                                 >
-                                    <input {...getInputProps()} />
-                                    <img
-                                        src={folderAdd}
-                                        alt="folderAdd"
-                                        className="h-10 w-10"
-                                    ></img>
-                                    <div className="flex felx-row gap-1">
-                                        <h3 className="text-sm font-normal">ჩააგდეთ ფაილი აქ ან</h3>
-                                        <h3 className="text-sm font-medium underline">
-                                            აირჩიეთ ფაილი
-                                        </h3>
-                                    </div>
+                                    {formik.values.image.name}
                                 </div>
-                            </section>
-                        )}
+                            )}
+                        </div>
                         <div className=" flex flex-row justify-between h-[140px]">
                             <div className="flex flex-col justify-start h-[140px] ">
                                 <p class="inputLabel">ავტორი *</p>

@@ -45,7 +45,7 @@ const Navbar = () => {
                         შესვლა
                     </button>
                 ) : (
-                    <Link to={"create"}>
+                    <Link to={"/create"}>
                         <button
                             // onClick={togglePopup}
                             className="bg-[#5D37F3] hover:bg-[#4A22EA] text-white font-semibold px-4 py-2 rounded-2xl"

@@ -11,28 +11,6 @@ const Home = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
 
-    // useEffect(() => {
-    //     const fetchBlogs = async () => {
-    //         try {
-    //             const response = await getAllBlogs();
-    //             setBlogs(response.data);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     };
-
-    //     const fetchCategories = async () => {
-    //         try {
-    //             const response = await getCategories();
-    //             setCategories(response.data);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     };
-
-    //     fetchBlogs();
-    //     fetchCategories();
-    // }, []);
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
@@ -59,25 +37,13 @@ const Home = () => {
         fetchCategories();
 
         const storedSelectedCategories =
-            JSON.parse(sessionStorage.getItem("selectedCategories")) || [];
+            JSON.parse(localStorage.getItem("selectedCategories")) || [];
         setSelectedCategories(storedSelectedCategories);
     }, []);
 
     useEffect(() => {
-        sessionStorage.setItem("selectedCategories", JSON.stringify(selectedCategories));
+        localStorage.setItem("selectedCategories", JSON.stringify(selectedCategories));
     }, [selectedCategories]);
-
-    const handleCategorySelection = (categoryId) => {
-        if (!selectedCategories.includes(categoryId)) {
-            const updatedCategories = [...selectedCategories, categoryId];
-            setSelectedCategories(updatedCategories);
-        }
-    };
-
-    const handleChipRemoval = (categoryId) => {
-        const updatedCategories = selectedCategories.filter((catId) => catId !== categoryId);
-        setSelectedCategories(updatedCategories);
-    };
 
     const toggleCategorySelection = (categoryId) => {
         if (selectedCategories.includes(categoryId)) {
@@ -90,16 +56,15 @@ const Home = () => {
 
     return (
         <div className=" min-h-screen bg-[#F3F2FA] pb-20 ">
-            {/* <div class="font-firaGO h-screen box-border scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 overflow-y-scroll scrollbar-thumb-rounded-full scrollbar-track-rounded-full"> */}
             <Navbar />
-            <div className="h-fit px-[6%] ">
-                <div className="h-[250px] mt-[80px] pt-8 flex flex-row justify-between ">
-                    <div className="h-full w-fit flex items-center">
+            <div className="h-fit">
+                <div className="h-[250px] mt-[80px] pt-8 px-[86px] flex flex-row justify-between ">
+                    <div className="h-full w-fit flex ">
                         <h1 className="h-fit text-6xl font-semibold  ">ბლოგი</h1>
                     </div>
                     <img src={Brand} className="h-[200px]"></img>
                 </div>
-                <div className="w-full my-8 mx-auto flex flex-wrap xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-center">
+                <div className="w-full mt-10 mb-12 mx-auto flex flex-wrap xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-center">
                     {categories.length > 0 &&
                         categories.map((category) => (
                             <div
@@ -128,7 +93,7 @@ const Home = () => {
                             </div>
                         ))}
                 </div>
-                <div className="w-full sm:px-[0] xl:px-[0] 2xl:px-[8%]  flex flex-wrap">
+                <div className="max-w-[1320px] m-auto flex flex-wrap justify-center">
                     {blogs.length > 0 &&
                         blogs
                             .filter((blog) =>
@@ -139,7 +104,7 @@ const Home = () => {
                                       )
                             )
                             .map((blog) => (
-                                <div className="w-full sm:w-1/1 md:w-1/2 lg:w-1/3 p-4 h-[620px] mb-[20px]">
+                                <div className="w-fit m-4 h-[620px] mb-[30px] ">
                                     <Card key={blog.id} blog={blog} />
                                 </div>
                             ))}
