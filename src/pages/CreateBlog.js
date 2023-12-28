@@ -39,15 +39,21 @@ const CreateBlog = () => {
             if (values.author) {
                 // errors.author = [];
                 if (!values.author || values.author.length < 4) {
-                    !errors.author ? (errors.author = []) : null;
+                    if (!errors.author) {
+                        errors.author = [];
+                    }
                     errors.author[0] = "მინიმუმ 4 სიმბოლო";
                 }
                 if (values.author.split(/\s+/).filter(Boolean).length < 2) {
-                    !errors.author ? (errors.author = []) : null;
+                    if (!errors.author) {
+                        errors.author = [];
+                    }
                     errors.author[1] = "მინიმუმ ორი სიტყვა";
                 }
                 if (!/^[\u10D0-\u10F0\s]+$/.test(values.author)) {
-                    !errors.author ? (errors.author = []) : null;
+                    if (!errors.author) {
+                        errors.author = [];
+                    }
                     errors.author[2] = "მხოლოდ ქართული სიმბოლოები";
                 }
             }
@@ -275,6 +281,11 @@ const CreateBlog = () => {
     // console.log("errors", formik.errors);
 
     console.log(formik.values);
+
+    const handleClose = () => {
+        togglePopup();
+        navigate("/");
+    };
 
     const handleImageClose = () => {
         formik.setFieldValue("image", null);
@@ -608,9 +619,7 @@ const CreateBlog = () => {
                             <img src={close} alt="close" className="h-6 " />
                         </button>
                         <LoginSuccess
-                            onClose={() => {
-                                togglePopup, navigate("/");
-                            }}
+                            onClose={handleClose}
                             successText="ჩანაწერი წარმატებით დაემატა"
                             buttonText="მთავარ გვერდზე დაბრუნება"
                         />

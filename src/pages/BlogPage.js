@@ -99,7 +99,6 @@ const Home = () => {
                                         <div className="mt-4">
                                             {/* <h2 className="text-xl font-semibold mb-2">{blog.title}</h2> */}
                                             <p className="w-fit text-black text-base font-medium mb-0">
-                                                {" "}
                                                 {blog.author}
                                             </p>
                                             <div className="flex flex-row mb-1">

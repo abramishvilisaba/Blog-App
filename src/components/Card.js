@@ -14,9 +14,8 @@ const Card = ({ blog }) => {
             />
             <div className="mt-4">
                 {/* <h2 className="text-xl font-semibold mb-2">{blog.title}</h2> */}
-                <p className="w-fit text-black text-base font-medium mb-0"> {blog.author}</p>
-                <p className="w-fit text-grayText font-light text-xs mb-1">{blog.publish_date}</p>
-
+                <p className="w-fit text-black text-base font-medium mb-2"> {blog.author}</p>
+                <p className="w-fit text-grayText font-light text-xs mb-4">{blog.publish_date}</p>
                 <p
                     className="w-fit text-black font-bold  text-xl mb-4 overflow-hidden"
                     style={{
