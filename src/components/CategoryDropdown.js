@@ -70,7 +70,7 @@ const CategoryDropdown = ({
                                 key={category.id}
                                 onClick={() => {
                                     if (selectedCategories.includes(category.id)) {
-                                        handleChipRemoval(category.id);
+                                        // handleChipRemoval(category.id);
                                     } else {
                                         handleCategorySelection(category.id);
                                     }

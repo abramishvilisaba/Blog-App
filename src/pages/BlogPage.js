@@ -116,7 +116,7 @@ const Home = () => {
                                             </div>
 
                                             <p className="w-fit text-black font-bold  text-xl mb-6">
-                                                EOMM-ის მრჩეველთა საბჭოს ნინო ეგაძე შეუერთდა
+                                                {blog.title}
                                             </p>
                                             <div
                                                 className="w-full flex  xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-start mb-10
@@ -196,7 +196,9 @@ const Home = () => {
                                 .filter((blog) => blog.id != id)
                                 .slice(currentSlide, currentSlide + 3)
                                 .map((blog) => (
-                                    <Card key={blog.id} blog={blog} />
+                                    <Link to={`/blogpage/${blog.id}`}>
+                                        <Card key={blog.id} blog={blog} />
+                                    </Link>
                                 ))}
                         </div>
                     </div>
