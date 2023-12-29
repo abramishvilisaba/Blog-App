@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Arrow from "../images/Arrow.png";
 import LOGO from "../images/LOGO.png";
-import folderAdd from "../images/folderAdd.png";
 import infoCircle from "../images/infoCircle.svg";
 import close from "../images/close.svg";
-import gallery from "../images/gallery.svg";
 
-import { getAllBlogs, getCategories } from "../api/blogAPI";
+import { getCategories } from "../api/blogAPI";
 import CategoryDropdown from "../components/CategoryDropdown";
 import "./createBlog.css";
 import { useFormik } from "formik";
-import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import _, { isEmpty } from "lodash";
+import _ from "lodash";
 import { Link, useNavigate } from "react-router-dom";
-import LoginForm from "../components/LoginForm";
 import LoginSuccess from "../components/LoginSuccess";
+import ImageUpload from "../components/ImageUpload";
 
 const token = process.env.REACT_APP_TOKEN;
 
@@ -37,7 +34,6 @@ const CreateBlog = () => {
         validate: (values) => {
             const errors = {};
             if (values.author) {
-                // errors.author = [];
                 if (!values.author || values.author.length < 4) {
                     if (!errors.author) {
                         errors.author = [];
@@ -63,9 +59,6 @@ const CreateBlog = () => {
             if (values.description && values.description.length < 2) {
                 errors.description = "მინიმუმ 2 სიმბოლო";
             }
-            // if (!values.publish_date) {
-            //     errors.publish_date = "თარიღი აუცილებელია";
-            // }
             if (values.email && !values.email.endsWith("@redberry.ge")) {
                 errors.email = "ელ. ფოსტა უნდა მთავრდებოდეს @redberry.ge-ით";
             }
@@ -85,6 +78,9 @@ const CreateBlog = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [image, setImage] = useState(null);
+    const [filledSomething, setFilledSomething] = useState(false);
+
+    const prevFormikValues = useRef(formik.values);
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -111,8 +107,6 @@ const CreateBlog = () => {
         reader.onload = function (event) {
             const imageBlob = event.target.result;
             localStorage.setItem("blogImage", imageBlob);
-            // localStorage.setItem("blogImage", imageBlob);
-            // console.log(file.name);
         };
         reader.readAsDataURL(file);
     }
@@ -137,15 +131,9 @@ const CreateBlog = () => {
         return new File([blob], imageName, { type: imageType });
     }
 
-    // useEffect(() => {
-    //     formik.values.image = image;
-    // }, [image]);
-
     const saveDataToStorage = (data) => {
         try {
-            // console.log("saveDataToStorage", data);
             if (data.image) {
-                // saveImageToLocalStorage(data.image);
                 saveImageToLocalStorage(image);
             }
             const formDataString = JSON.stringify(data);
@@ -156,20 +144,19 @@ const CreateBlog = () => {
     };
 
     useEffect(() => {
-        if (hasFilledValues) {
+        if (hasFilledValues || filledSomething) {
+            if (!filledSomething) {
+                setFilledSomething(true);
+            }
+            console.log("saveDataToStorage", formik.values);
             saveDataToStorage(formik.values);
         }
     }, [formik.values, selectedCategories]);
 
     useEffect(() => {
-        // const storedImage = JSON.parse(localStorage.getItem("blogImage"));
-        // const storedImage = localStorage.getItem("blogImage");
-        // savedFormData.image = storedImage;
-
         const savedFormData = JSON.parse(localStorage.getItem("blogFormData"));
         console.log("savedFormData", savedFormData);
         console.log(formik.values);
-        // formik.values = savedFormData;
         formik.setValues((prevValues) => ({
             ...prevValues,
             ...savedFormData,
@@ -237,11 +224,8 @@ const CreateBlog = () => {
         // Object.entries(formik.values).forEach(([key, value]) => {
         //     formDataToSend.append(key, value);
         // });
-
         if (areFieldsFilled(formik.values) && Object.keys(formik.errors).length == 0) {
             formik.values.image = image;
-            // formik.values.categories = JSON.stringify(formik.values.categories);
-
             console.log("submit");
             console.log(formik.values);
             try {
@@ -277,11 +261,6 @@ const CreateBlog = () => {
         });
     }
 
-    // console.log(formik.values);
-    // console.log("errors", formik.errors);
-
-    console.log(formik.values);
-
     const handleClose = () => {
         togglePopup();
         navigate("/");
@@ -291,10 +270,14 @@ const CreateBlog = () => {
         formik.setFieldValue("image", null);
     };
 
+    // console.log(formik.values);
+
     return (
         <div className="bg-backGround h-fit pb-40">
             <div className="h-[80px] bg-white  ">
-                <img src={LOGO} alt="LOGO" className="mx-auto py-[28px]" />
+                <Link to={"/"}>
+                    <img src={LOGO} alt="LOGO" className="mx-auto py-[28px]" />
+                </Link>
             </div>
             <div className="flex flex-row h-fit pt-10">
                 <div className="w-[35%]  pl-[76px]">
@@ -317,59 +300,13 @@ const CreateBlog = () => {
                     className=" w-full "
                 >
                     <div className="flex flex-col gap-6 h-[fit] justify-start">
-                        <div>
-                            <p className="font-medium text-sm w-[fit] mb-2">ატვირთეთ ფოტო</p>
-
-                            {!formik.values.image ? (
-                                // <div>{formik.values.image.name} </div>
-                                <section>
-                                    <div
-                                        // className="box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center
-                                        //          bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer "
-                                        {...getRootProps({
-                                            className:
-                                                "dropzone box w-[100%] h-[180px] m-[-1px] py-12 flex flex-col justify-between items-center bg-indigoLight border-dashed border-[1px] rounded-2xl border-[#85858D]  cursor-pointer",
-                                        })}
-                                    >
-                                        <input {...getInputProps()} />
-                                        <img
-                                            src={folderAdd}
-                                            alt="folderAdd"
-                                            className="h-10 w-10"
-                                        ></img>
-                                        <div className="flex felx-row gap-1">
-                                            <h3 className="text-sm font-normal">
-                                                ჩააგდეთ ფაილი აქ ან
-                                            </h3>
-                                            <h3 className="text-sm font-medium underline">
-                                                აირჩიეთ ფაილი
-                                            </h3>
-                                        </div>
-                                    </div>
-                                </section>
-                            ) : (
-                                <div
-                                    className="w-[600px] h-[44px] mb-2 py-[12px] px-[18px] text-black text-sm font-normal flex flex-row justify-between
-                                                     rounded-xl  bg-altGrayFill "
-                                >
-                                    <div className="flex flex-row gap-2">
-                                        <img
-                                            src={gallery}
-                                            alt="gallery"
-                                            className="h-6 w-6 mt-[-2px]"
-                                        ></img>
-                                        {formik.values.image.name}
-                                    </div>
-
-                                    <img
-                                        src={close}
-                                        alt="close"
-                                        className="h-6 w-6 hover:cursor-pointer"
-                                        onClick={handleImageClose}
-                                    ></img>
-                                </div>
-                            )}
-                        </div>
+                        <ImageUpload
+                            setImage={setImage}
+                            image={image}
+                            values={formik.values}
+                            handleImageClose={handleImageClose}
+                            handleDrop={handleDrop}
+                        />
                         <div className=" flex flex-row justify-between h-[140px]">
                             <div className="flex flex-col justify-start h-[140px] ">
                                 <p class="inputLabel">ავტორი *</p>
@@ -389,7 +326,6 @@ const CreateBlog = () => {
                                     }
                                     onChange={formik.handleChange}
                                     value={formik.values.author}
-                                    // validate={validateAuthor}
                                 />
                                 <ul className="list-disc pl-[18px] flex flex-col gap-1">
                                     <li
@@ -435,7 +371,6 @@ const CreateBlog = () => {
                                     placeholder="შეიყვანეთ სათაური"
                                     onChange={formik.handleChange}
                                     value={formik.values.title}
-                                    // validate={validateTitle}
                                     class={
                                         formik.errors.title
                                             ? "inputFieldError"
@@ -461,13 +396,11 @@ const CreateBlog = () => {
                         <div className="flex flex-col justify-start h-[180px] w-full ">
                             <p class="inputLabel">აღწერა *</p>
                             <textarea
-                                // as="textarea"
                                 type="text"
                                 name="description"
                                 placeholder="შეიყვანეთ აღწერა"
                                 onChange={formik.handleChange}
                                 value={formik.values.description}
-                                // validate={validateDescription}
                                 class={
                                     formik.errors.description
                                         ? "inputFieldError"
@@ -511,10 +444,6 @@ const CreateBlog = () => {
                                             : "inputField"
                                     }
                                     style={{ margin: "0px" }}
-                                    // className="px-[14px] w-[288px] h-[44px] text-sm text-grayText font-normal
-                                    //         border rounded-xl focus:outline-none focus:border-indigo-500"
-
-                                    // validate={validateDate}
                                     onChange={formik.handleChange}
                                     value={formik.values.publish_date}
                                 />
@@ -524,7 +453,6 @@ const CreateBlog = () => {
                                 <CategoryDropdown
                                     categories={categories}
                                     selectedCategories={selectedCategories}
-                                    // selectedCategories={formik.values.categories}
                                     handleChipRemoval={handleChipRemoval}
                                     handleCategorySelection={handleCategorySelection}
                                     showDropdown={showDropdown}
@@ -547,7 +475,6 @@ const CreateBlog = () => {
                                 }
                                 onChange={formik.handleChange}
                                 value={formik.values.email}
-                                // validate={validateEmail}
                             />
                             {formik.errors.email && (
                                 <div className="flex flex-row gap-1">
@@ -559,7 +486,6 @@ const CreateBlog = () => {
                                         />
                                     )}
                                     <p
-                                        // className="font-normal text-grayText text-xs "
                                         class={
                                             formik.errors.email
                                                 ? "errorMessage"
@@ -571,18 +497,6 @@ const CreateBlog = () => {
                                         მეილი უნდა მთავრდებოდეს @redberry.ge-ით
                                     </p>
                                 </div>
-                                // <p
-                                //     className="font-normal text-grayText text-xs"
-                                //     class={
-                                //         formik.errors.email
-                                //             ? "errorMessage"
-                                //             : formik.values.email
-                                //             ? "successMessage"
-                                //             : "defaultMessage"
-                                //     }
-                                // >
-                                //     მეილი უნდა მთავრდებოდეს @redberry.ge-ით
-                                // </p>
                             )}
                         </div>
                     </div>
@@ -610,12 +524,14 @@ const CreateBlog = () => {
                     </div>
                 </form>
                 {showPopup && (
-                    <div className="fixed flex flex-col w-1/4 h-[300px] justify-between top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-2xl shadow-lg">
+                    <div
+                        className="fixed flex flex-col w-1/4 h-[300px] justify-between top-1/2 left-1/2 transform
+                             -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-2xl shadow-lg"
+                    >
                         <button
                             onClick={togglePopup}
                             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                         >
-                            {/* <FontAwesomeIcon icon={faTimes} /> */}
                             <img src={close} alt="close" className="h-6 " />
                         </button>
                         <LoginSuccess

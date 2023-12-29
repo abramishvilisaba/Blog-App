@@ -32,24 +32,26 @@ const CategoryDropdown = ({
                     {selectedCategories.map((categoryId) => {
                         const category = categories.find((cat) => cat.id === categoryId);
                         return (
-                            <span
-                                key={categoryId}
-                                onClick={() => handleChipRemoval(categoryId)}
-                                style={{
-                                    backgroundColor: category?.background_color || "white",
-                                    color: category?.text_color || "black",
-                                    // width: "fit",
-                                    whiteSpace: "nowrap",
-                                }}
-                                className={`flex flex-row w-fit  items-center justify-between h-8 text-xs px-3 rounded-2xl overflow-visible hover:cursor-pointer `}
-                            >
-                                {category?.title}
-                                <img
-                                    src={add}
-                                    alt="add"
-                                    className="h-4 w-4 ml-[8px] text-white "
-                                ></img>
-                            </span>
+                            <div>
+                                <span
+                                    key={categoryId}
+                                    onClick={() => handleChipRemoval(categoryId)}
+                                    style={{
+                                        backgroundColor: category?.background_color || "white",
+                                        color: category?.text_color || "black",
+                                        // width: "fit",
+                                        whiteSpace: "nowrap",
+                                    }}
+                                    className={`flex flex-row w-max  items-center justify-between h-8 text-xs px-3 rounded-2xl overflow-visible hover:cursor-pointer `}
+                                >
+                                    {category?.title}
+                                    <img
+                                        src={add}
+                                        alt="add"
+                                        className="h-4 w-4 ml-[8px] text-white "
+                                    ></img>
+                                </span>
+                            </div>
                         );
                     })}
                 </div>
@@ -57,7 +59,6 @@ const CategoryDropdown = ({
                     className="h-[44px] w-[40px]  cursor-pointer flex items-center"
                     onClick={() => setShowDropdown(!showDropdown)}
                 >
-                    {/* &#9660; */}
                     <img src={arrowDown} alt="arrowDown" className="h-5 w-5 ml-[2px] "></img>
                 </div>
             </div>

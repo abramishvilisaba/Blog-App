@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import Logo from "../images/LOGO.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import LoginForm from "./LoginForm";
 import LoginSuccess from "./LoginSuccess";
 import { apiLogin } from "../api/blogAPI";
@@ -11,8 +9,6 @@ import close from "../images/close.svg";
 const Navbar = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
-
-    // console.log(error);
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -46,10 +42,7 @@ const Navbar = () => {
                     </button>
                 ) : (
                     <Link to={"/create"}>
-                        <button
-                            // onClick={togglePopup}
-                            className="bg-[#5D37F3] hover:bg-[#4A22EA] text-white font-semibold px-4 py-2 rounded-2xl"
-                        >
+                        <button className="bg-[#5D37F3] hover:bg-[#4A22EA] text-white font-semibold px-4 py-2 rounded-2xl">
                             დაამატე ბლოგი
                         </button>
                     </Link>
@@ -60,7 +53,6 @@ const Navbar = () => {
                             onClick={togglePopup}
                             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                         >
-                            {/* <FontAwesomeIcon icon={faTimes} /> */}
                             <img src={close} alt="close" className="h-6 " />
                         </button>
 

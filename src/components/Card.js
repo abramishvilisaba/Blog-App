@@ -4,8 +4,6 @@ import { Link, useNavigate, redirect } from "react-router-dom";
 
 const Card = ({ blog }) => {
     return (
-        // <div className="w-full sm:w-1/1 md:w-1/2 lg:w-1/3 p-4 h-[620px] mb-[20px]">
-
         <div className=" rounded-xl w-[408px] h-[620px]">
             <img
                 src={blog.image}
@@ -13,7 +11,6 @@ const Card = ({ blog }) => {
                 className="w-full aspect-[1/0.8] object-cover rounded-2xl"
             />
             <div className="mt-4">
-                {/* <h2 className="text-xl font-semibold mb-2">{blog.title}</h2> */}
                 <p className="w-fit text-black text-base font-medium mb-2"> {blog.author}</p>
                 <p className="w-fit text-grayText font-light text-xs mb-4">{blog.publish_date}</p>
                 <p
@@ -66,10 +63,7 @@ const Card = ({ blog }) => {
                     </p>
                 </div>
 
-                <div
-                    // onClick={loader}
-                    className="flex flex-row w-fit h-fit hover:cursor-pointer mb-4"
-                >
+                <div className="flex flex-row w-fit h-fit hover:cursor-pointer mb-4">
                     <Link to={`/blogpage/${blog.id}`}>
                         <p className="w-fit text-indigo text-base font-medium  flex overflow-hidden  ">
                             სრულად ნახვა

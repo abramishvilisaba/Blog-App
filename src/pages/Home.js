@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { getAllBlogs, getCategories } from "../api/blogAPI";
-import CategoryDropdown from "../components/CategoryDropdown";
 import Card from "../components/Card";
 import Navbar from "../components/Navbar";
 import Brand from "../images/Blog.png";
@@ -9,7 +8,6 @@ const Home = () => {
     const [blogs, setBlogs] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
-    const [showDropdown, setShowDropdown] = useState(false);
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -83,7 +81,6 @@ const Home = () => {
                                 <h3
                                     style={{
                                         color: `${category?.background_color}` || "white",
-
                                         // filter: "brightness(80%)",
                                     }}
                                     className="w-fit font-medium text-xs px-3 py-2"
@@ -93,7 +90,7 @@ const Home = () => {
                             </div>
                         ))}
                 </div>
-                <div className="max-w-[1320px] m-auto flex flex-wrap justify-center">
+                <div className="max-w-[1320px] m-auto flex flex-wrap justify-start">
                     {blogs.length > 0 &&
                         blogs
                             .filter((blog) =>
