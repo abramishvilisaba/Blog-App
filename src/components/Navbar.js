@@ -17,7 +17,6 @@ const Navbar = () => {
     const handleLogin = async (email) => {
         // try {
         const response = await apiLogin(email);
-        console.log(response.status);
         setLoggedIn(true);
         // } catch (error) {
         //     console.log("Error logging in:", error);

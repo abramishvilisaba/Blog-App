@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import arrowDown from "../images/arrowDown.png";
 import add from "../images/add.svg";
 
@@ -9,9 +9,10 @@ const CategoryDropdown = ({
     handleCategorySelection,
     showDropdown,
     setShowDropdown,
+    dropdownRef,
 }) => {
     return (
-        <div className="dropdown-box relative inline-block ">
+        <div className="dropdown-box relative inline-block " ref={dropdownRef}>
             <div
                 className="dropdown-header w-[288px] h-[44px] overflow-clip  text-center flex gap-1  
                         text-grayText font-normal border  rounded-xl focus:outline-none focus:border-indigo-500"

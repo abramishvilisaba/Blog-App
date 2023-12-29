@@ -14,7 +14,7 @@ const Card = ({ blog }) => {
                 <p className="w-fit text-black text-base font-medium mb-2"> {blog.author}</p>
                 <p className="w-fit text-grayText font-light text-xs mb-4">{blog.publish_date}</p>
                 <p
-                    className="w-fit text-black font-bold  text-xl mb-4 overflow-hidden"
+                    className="w-fit h-[56px]  text-black font-bold  text-xl mb-4 overflow-hidden"
                     style={{
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
@@ -26,13 +26,14 @@ const Card = ({ blog }) => {
                 </p>
                 <div
                     className="w-full flex  xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-start mb-2
-                        overflow-auto scrollbar-thin scrollbar-track-transparent pb-2 overflow-y-hidden"
+                        overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 pb-2 h-10 overflow-y-hidden"
                 >
                     {blog.categories.length > 0 &&
                         blog.categories.map((category) => (
                             <div
                                 key={category.id}
-                                className="cursor-pointer w-fit h-fit whitespace-nowrap rounded-full border-1 border-solid"
+                                // className="cursor-pointer w-fit h-fit whitespace-nowrap rounded-full border-1 border-solid"
+                                className=" w-fit h-fit whitespace-nowrap rounded-full border-1 border-solid"
                                 style={{
                                     backgroundColor: `${category?.background_color}15` || "black",
                                 }}

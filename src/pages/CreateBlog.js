@@ -76,6 +76,22 @@ const CreateBlog = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setShowDropdown(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     const [showPopup, setShowPopup] = useState(false);
     const [image, setImage] = useState(null);
     const [filledSomething, setFilledSomething] = useState(false);
@@ -148,15 +164,14 @@ const CreateBlog = () => {
             if (!filledSomething) {
                 setFilledSomething(true);
             }
-            console.log("saveDataToStorage", formik.values);
+            // console.log("saveDataToStorage", formik.values);
             saveDataToStorage(formik.values);
         }
     }, [formik.values, selectedCategories]);
 
     useEffect(() => {
         const savedFormData = JSON.parse(localStorage.getItem("blogFormData"));
-        console.log("savedFormData", savedFormData);
-        console.log(formik.values);
+        // console.log("savedFormData", savedFormData);
         formik.setValues((prevValues) => ({
             ...prevValues,
             ...savedFormData,
@@ -164,7 +179,7 @@ const CreateBlog = () => {
 
         if (savedFormData) {
             if (savedFormData.image) {
-                console.log("savedFormData.image", savedFormData.image);
+                // console.log("savedFormData.image", savedFormData.image);
                 const imageBlob = createImageBlobFromDataUrl(
                     savedFormData.image.name,
                     savedFormData.image.type
@@ -201,7 +216,6 @@ const CreateBlog = () => {
 
     const handleDrop = (acceptedFiles) => {
         if (acceptedFiles[0]) {
-            console.log(acceptedFiles[0].name);
             setImage(acceptedFiles[0]);
             formik.setValues({
                 ...formik.values,
@@ -280,7 +294,7 @@ const CreateBlog = () => {
                 </Link>
             </div>
             <div className="flex flex-row h-fit pt-10">
-                <div className="w-[35%]  pl-[76px]">
+                <div className="w-[31%]  pl-[76px]">
                     <div className="h-[44px] w-[44px]">
                         <Link to={"/"}>
                             <img src={Arrow} alt="Arrow" className="h-[44px] w-[44px]" />
@@ -291,7 +305,7 @@ const CreateBlog = () => {
                     <h1 className="w-fit  font-bold text-[32px]">ბლოგის დამატება</h1>
                 </div>
             </div>
-            <div className="flex w-[600px] h-[848px] ml-[35%] mt-10">
+            <div className="flex w-[600px] h-[848px] ml-[31%] mt-10">
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
@@ -457,6 +471,7 @@ const CreateBlog = () => {
                                     handleCategorySelection={handleCategorySelection}
                                     showDropdown={showDropdown}
                                     setShowDropdown={setShowDropdown}
+                                    dropdownRef={dropdownRef}
                                 />
                             </div>
                         </div>

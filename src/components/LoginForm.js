@@ -73,7 +73,7 @@ const LoginForm = ({ onSubmit }) => {
                 <button
                     type="submit"
                     disabled={formik.isSubmitting}
-                    className="bg-indigo hover:bg-[#2522ea] text-white font-medium text-sm w-full px-4 py-2 mt-6 rounded-xl"
+                    className="bg-indigo hover:bg-[#2522ea] text-white font-medium text-sm w-full h-[40px] px-4 py-2 mt-6 rounded-xl"
                 >
                     {formik.isSubmitting ? "იტვირთება..." : "შესვლა"}
                 </button>

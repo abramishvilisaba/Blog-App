@@ -6,7 +6,8 @@ import { useParams, Link } from "react-router-dom";
 import Arrow2 from "../images/Arrow2.svg";
 import ArrowButtonRight from "../images/ArrowButtonRight.svg";
 import ArrowButtonLeft from "../images/ArrowButtonLeft.svg";
-import ArrowButtonInactive from "../images/ArrowButtonInactive.svg";
+import ArrowButtonInactiveLeft from "../images/ArrowButtonInactiveLeft.svg";
+import ArrowButtonInactiveRight from "../images/ArrowButtonInactiveRight.svg";
 
 const Home = () => {
     let { id } = useParams();
@@ -25,8 +26,6 @@ const Home = () => {
     const prevSlide = () => {
         setCurrentSlide((prevSlide) => (prevSlide === 0 ? blogs.length - 3 : prevSlide - 1));
     };
-    console.log(blogs.length);
-    console.log(currentSlide);
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -62,7 +61,6 @@ const Home = () => {
         fetchBlogs();
         fetchCategories();
         fetchBlogById(id);
-        console.log("scroll");
     }, [id]);
 
     const scrollToRef = useRef(null);
@@ -111,18 +109,18 @@ const Home = () => {
                                                     )}
                                                 </div>
 
-                                                <p className="w-fit text-black font-bold  text-xl mb-6">
+                                                <p className="w-fit text-black font-bold h-fit text-[32px] leading-10 mb-6">
                                                     {blog.title}
                                                 </p>
                                                 <div
                                                     className="w-full flex  xl:gap-x-2 xl:gap-y-4 gap-x-1 gap-y-2 justify-start mb-10
-                                            overflow-auto scrollbar-thin scrollbar-track-transparent  overflow-y-hidden"
+                                                    overflow-auto scrollbar-thin scrollbar-track-transparent  overflow-y-hidden"
                                                 >
                                                     {blog.categories.length > 0 &&
                                                         blog.categories.map((category) => (
                                                             <div
                                                                 key={category.id}
-                                                                className="cursor-pointer w-fit h-fit whitespace-nowrap rounded-full border-1 border-solid"
+                                                                className=" w-fit h-fit whitespace-nowrap rounded-full border-1 border-solid"
                                                                 style={{
                                                                     backgroundColor:
                                                                         `${category?.background_color}15` ||
@@ -156,54 +154,67 @@ const Home = () => {
                     </div>
                     {blogs && (
                         <div>
-                            <div className="w-fit m-auto">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h2 className="text-[32px] font-bold ">მსგავსი სტატიები</h2>
-                                    <div className="flex space-x-2">
-                                        <button
-                                            onClick={prevSlide}
-                                            className="bg-gray-200 rounded-3xl"
-                                            disabled={currentSlide === 0}
-                                        >
-                                            {currentSlide === 0 ? (
-                                                <img
-                                                    src={ArrowButtonInactive}
-                                                    alt="ArrowButtonInactive"
-                                                    className="h-[44px] w-[44px]"
-                                                />
-                                            ) : (
-                                                <img
-                                                    src={ArrowButtonLeft}
-                                                    alt="ArrowButtonLeft"
-                                                    className="h-[44px] w-[44px]"
-                                                />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={nextSlide}
-                                            className="bg-gray-200 rounded-3xl"
-                                        >
-                                            <img
-                                                src={ArrowButtonRight}
-                                                alt="ArrowButtonRight"
-                                                className="h-[44px] w-[44px]"
-                                            />
-                                        </button>
+                            {blogs.length > 1 && (
+                                <div className="w-fit m-auto">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h2 className="text-[32px] font-bold  ">
+                                            მსგავსი სტატიები
+                                        </h2>
+                                        <div className="overflow-hidden flex space-x-2">
+                                            <button
+                                                onClick={prevSlide}
+                                                className="bg-gray-200 rounded-3xl"
+                                                disabled={currentSlide === 0}
+                                            >
+                                                {currentSlide === 0 ? (
+                                                    <img
+                                                        src={ArrowButtonInactiveLeft}
+                                                        alt="ArrowButtonInactive"
+                                                        className="h-[44px] w-[44px]"
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={ArrowButtonLeft}
+                                                        alt="ArrowButtonLeft"
+                                                        className="h-[44px] w-[44px]"
+                                                    />
+                                                )}
+                                            </button>
+                                            <button
+                                                onClick={nextSlide}
+                                                className="bg-gray-200 rounded-3xl"
+                                                disabled={currentSlide >= blogs.length - 4}
+                                            >
+                                                {currentSlide >= blogs.length - 4 ? (
+                                                    <img
+                                                        src={ArrowButtonInactiveRight}
+                                                        alt="ArrowButtonInactive"
+                                                        className="h-[44px] w-[44px]"
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={ArrowButtonRight}
+                                                        alt="ArrowButtonLeft"
+                                                        className="h-[44px] w-[44px]"
+                                                    />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="overflow-hidden flex space-x-4">
+                                        {blogs
+                                            .filter((blog) => blog.id != id)
+                                            .slice(currentSlide, currentSlide + 3)
+                                            .map((blog) => (
+                                                <div key={blog.id}>
+                                                    <Link to={`/blogpage/${blog.id}`}>
+                                                        <Card blog={blog} />
+                                                    </Link>
+                                                </div>
+                                            ))}
                                     </div>
                                 </div>
-                                <div className="overflow-x-auto flex space-x-4">
-                                    {blogs
-                                        .filter((blog) => blog.id != id)
-                                        .slice(currentSlide, currentSlide + 3)
-                                        .map((blog) => (
-                                            <div key={blog.id}>
-                                                <Link to={`/blogpage/${blog.id}`}>
-                                                    <Card blog={blog} />
-                                                </Link>
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
+                            )}
                         </div>
                     )}
                 </div>
